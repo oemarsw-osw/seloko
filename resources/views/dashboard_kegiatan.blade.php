@@ -45,9 +45,9 @@
                 </div>
             </div>
             <div class="header-right">
-                <div class="days-badge">
+                <div class="days-badge" id="days-badge-container">
                     <i data-lucide="clock" class="icon-sm"></i>
-                    <span>Sisa Hari: <strong>16</strong></span>
+                    <span id="days-badge-text">Sisa Hari: <strong>-</strong></span>
                 </div>
             </div>
         </header>
@@ -140,7 +140,6 @@
                     <div class="resource-icon-box"><i data-lucide="book-open"></i></div>
                     <div class="resource-meta">
                         <h4>Buku Pedoman</h4>
-                        <span class="badge-status">Update: 2 days ago</span>
                     </div>
                 </div>
                 <p class="resource-desc">Panduan lengkap pelaksanaan survei lapangan beserta tata cara wawancara.</p>
@@ -152,7 +151,6 @@
                     <div class="resource-icon-box green"><i data-lucide="text-select"></i></div>
                     <div class="resource-meta">
                         <h4>Kuesioner</h4>
-                        <span class="badge-status">V2.1 - Aktif</span>
                     </div>
                 </div>
                 <p class="resource-desc">Daftar pertanyaan terstruktur untuk responden individu dan rumah tangga.</p>
@@ -164,7 +162,6 @@
                     <div class="resource-icon-box"><i data-lucide="map"></i></div>
                     <div class="resource-meta">
                         <h4>Kerangka Sampel</h4>
-                        <span class="badge-status">Data Final</span>
                     </div>
                 </div>
                 <p class="resource-desc">Daftar blok sensus dan rumah tangga target sasaran untuk setiap wilayah.</p>
@@ -176,7 +173,6 @@
                     <div class="resource-icon-box"><i data-lucide="mail"></i></div>
                     <div class="resource-meta">
                         <h4>Surat Pengantar</h4>
-                        <span class="badge-status">Template Resmi</span>
                     </div>
                 </div>
                 <p class="resource-desc">Dokumen legalitas untuk ditunjukkan kepada responden dan aparat desa.</p>

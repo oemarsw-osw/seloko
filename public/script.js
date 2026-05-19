@@ -140,6 +140,7 @@ async function loadDashboardData() {
             const option = document.createElement('option');
             option.value = act.id_kegiatan;
             option.text = act.nama_kegiatan;
+            option.dataset.deadline = act.tanggal_deadline;
             kegiatanSelector.appendChild(option);
         });
 
@@ -160,6 +161,56 @@ async function loadDashboardData() {
 async function fetchProgressData() {
     const id_kegiatan = kegiatanSelector.value;
     if (!id_kegiatan) return;
+
+    // Show Loading Effect
+    if (valTarget) valTarget.innerText = "Memuat...";
+    if (valSubmit) valSubmit.innerText = "Memuat...";
+    if (valApprove) valApprove.innerText = "Memuat...";
+    if (valProgress) valProgress.innerText = "Memuat...";
+
+    // Update Days Badge Dynamically
+    const selectedOption = kegiatanSelector.options[kegiatanSelector.selectedIndex];
+    const deadlineDateStr = selectedOption.dataset.deadline;
+    const daysBadgeContainer = document.getElementById('days-badge-container');
+    const daysBadgeText = document.getElementById('days-badge-text');
+
+    if (daysBadgeContainer && daysBadgeText) {
+        if (deadlineDateStr && deadlineDateStr !== 'null') {
+            const deadlineDate = new Date(deadlineDateStr);
+            const today = new Date();
+            const timeDiff = deadlineDate.getTime() - today.getTime();
+            const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            
+            daysBadgeText.innerHTML = `Sisa Hari: <strong>${daysDiff}</strong>`;
+            
+            // Remove previous classes & inline styles
+            daysBadgeContainer.className = 'days-badge';
+            daysBadgeContainer.style.backgroundColor = '';
+            daysBadgeContainer.style.color = '';
+            const icon = daysBadgeContainer.querySelector('i');
+            if(icon) icon.style.color = '';
+
+            if (daysDiff < 8) {
+                daysBadgeContainer.style.backgroundColor = '#fee2e2'; // Red light
+                daysBadgeContainer.style.color = '#b91c1c';
+                if(icon) icon.style.color = '#b91c1c';
+            } else if (daysDiff <= 20) {
+                daysBadgeContainer.style.backgroundColor = '#fef3c7'; // Yellow light
+                daysBadgeContainer.style.color = '#b45309';
+                if(icon) icon.style.color = '#b45309';
+            } else {
+                daysBadgeContainer.style.backgroundColor = '#d1fae5'; // Green light
+                daysBadgeContainer.style.color = '#047857';
+                if(icon) icon.style.color = '#047857';
+            }
+        } else {
+            daysBadgeText.innerHTML = `Sisa Hari: <strong>-</strong>`;
+            daysBadgeContainer.style.backgroundColor = '';
+            daysBadgeContainer.style.color = '';
+            const icon = daysBadgeContainer.querySelector('i');
+            if(icon) icon.style.color = '';
+        }
+    }
 
     try {
         const progRes = await fetch(`/api/progress/${id_kegiatan}`);
