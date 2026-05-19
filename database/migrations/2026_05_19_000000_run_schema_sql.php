@@ -13,7 +13,9 @@ return new class extends Migration
     public function up(): void
     {
         $sql = file_get_contents(base_path('../schema.sql'));
-        $sql = str_replace('SERIAL PRIMARY KEY', 'INTEGER PRIMARY KEY', $sql);
+        if (DB::getDriverName() === 'sqlite') {
+            $sql = str_replace('SERIAL PRIMARY KEY', 'INTEGER PRIMARY KEY', $sql);
+        }
         DB::unprepared($sql);
     }
 
