@@ -17,4 +17,9 @@ $_ENV['APP_PACKAGES_CACHE'] = '/tmp/packages.php';
 $_ENV['APP_ROUTES_CACHE'] = '/tmp/routes.php';
 $_ENV['APP_SERVICES_CACHE'] = '/tmp/services.php';
 
+// Fix for Vercel 404 Route Not Found issue
+// Force script name to /index.php so Symfony doesn't strip /api from PATH_INFO
+$_SERVER['SCRIPT_NAME'] = '/index.php';
+$_SERVER['SCRIPT_FILENAME'] = __DIR__ . '/../public/index.php';
+
 require __DIR__ . '/../public/index.php';
