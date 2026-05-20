@@ -88,6 +88,12 @@
                             </tbody>
                         </table>
                     </div>
+                    
+                    <div style="margin-top: 20px; display: flex; justify-content: flex-end;">
+                        <button id="btn-update-all" class="btn-primary" onclick="updateAllRows()" style="display: none; padding: 10px 20px; font-weight: 600; border-radius: 6px; cursor: pointer; border: none; align-items: center; gap: 8px;">
+                            <i data-lucide="save" style="width: 18px; height: 18px;"></i> Simpan Semua Perubahan
+                        </button>
+                    </div>
                 </div>
             </main>
         </div>
@@ -144,6 +150,7 @@
             const tbody = document.getElementById('progress-tbody');
             if (!id_kegiatan) {
                 tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Pilih kegiatan terlebih dahulu</td></tr>';
+                document.getElementById('btn-update-all').style.display = 'none';
                 return;
             }
 
@@ -201,6 +208,13 @@
                     }
                     tbody.appendChild(tr);
                 });
+                
+                if (data.length > 0) {
+                    document.getElementById('btn-update-all').style.display = 'inline-flex';
+                } else {
+                    document.getElementById('btn-update-all').style.display = 'none';
+                }
+                lucide.createIcons();
             } catch (e) { console.error(e); }
         }
 
@@ -226,9 +240,86 @@
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify(payload)
                 });
-                if (res.ok) alert('Update Berhasil!');
-                else alert('Update Gagal!');
-            } catch (e) { alert('Update Gagal! Periksa koneksi server.'); }
+                if (res.ok) {
+                    Swal.fire({ title: 'Berhasil!', text: 'Data berhasil diperbarui.', icon: 'success', timer: 1500, showConfirmButton: false });
+                } else {
+                    Swal.fire('Gagal!', 'Terjadi kesalahan saat memperbarui data.', 'error');
+                }
+            } catch (e) { 
+                Swal.fire('Gagal!', 'Periksa koneksi server Anda.', 'error'); 
+            }
+        }
+
+        async function updateAllRows() {
+            const id_kegiatan = parseInt(document.getElementById('select-kegiatan').value);
+            if (!id_kegiatan) return;
+
+            const currentKegiatan = kegiatanData.find(k => k.id_kegiatan === id_kegiatan);
+            const isPAPI = currentKegiatan && currentKegiatan.metode_default === 'PAPI';
+            const mode = isPAPI ? 'PAPI' : 'CAPI';
+
+            const tbody = document.getElementById('progress-tbody');
+            const rows = tbody.querySelectorAll('tr');
+            
+            Swal.fire({
+                title: 'Menyimpan Data...',
+                text: 'Mohon tunggu sebentar',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            let successCount = 0;
+            let failCount = 0;
+
+            const promises = Array.from(rows).map(async (row) => {
+                const btn = row.querySelector('.btn-save-row');
+                if (!btn) return;
+                
+                const onclickStr = btn.getAttribute('onclick');
+                const match = onclickStr.match(/saveRow\((\d+)/);
+                if (!match) return;
+                const id_progress = match[1];
+
+                let payload = {};
+                if (mode === 'PAPI') {
+                    payload = {
+                        papi_belum_dicacah: document.getElementById(`papi_belum_${id_progress}`).value,
+                        papi_dicacah: document.getElementById(`papi_dicacah_${id_progress}`).value,
+                        papi_diolah: document.getElementById(`papi_diolah_${id_progress}`).value
+                    };
+                } else {
+                    payload = {
+                        capi_open: document.getElementById(`open_${id_progress}`).value,
+                        capi_submit: document.getElementById(`submit_${id_progress}`).value,
+                        capi_approved: document.getElementById(`app_${id_progress}`).value,
+                        capi_rejected: document.getElementById(`rej_${id_progress}`).value
+                    };
+                }
+
+                try {
+                    const res = await fetch(`/api/progress/${id_progress}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify(payload)
+                    });
+                    if (res.ok) successCount++;
+                    else failCount++;
+                } catch (e) {
+                    failCount++;
+                }
+            });
+
+            await Promise.all(promises);
+
+            if (failCount === 0 && successCount > 0) {
+                Swal.fire('Berhasil!', `${successCount} wilayah berhasil diperbarui.`, 'success');
+            } else if (successCount > 0) {
+                Swal.fire('Selesai', `${successCount} berhasil, ${failCount} gagal diperbarui.`, 'warning');
+            } else {
+                Swal.fire('Gagal!', 'Semua data gagal diperbarui.', 'error');
+            }
         }
 
         loadKegiatan();
