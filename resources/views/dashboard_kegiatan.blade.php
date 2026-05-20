@@ -143,7 +143,7 @@
                     </div>
                 </div>
                 <p class="resource-desc">Panduan lengkap pelaksanaan survei lapangan beserta tata cara wawancara.</p>
-                <button class="btn-outline"><i data-lucide="download"></i> Unduh</button>
+                <button class="btn-outline"><i data-lucide="external-link"></i> Buka</button>
             </div>
 
             <div class="resource-card">
@@ -165,7 +165,7 @@
                     </div>
                 </div>
                 <p class="resource-desc">Daftar blok sensus dan rumah tangga target sasaran untuk setiap wilayah.</p>
-                <button class="btn-outline"><i data-lucide="download"></i> Unduh CSV</button>
+                <button class="btn-outline"><i data-lucide="external-link"></i> Buka</button>
             </div>
 
             <div class="resource-card">
@@ -176,7 +176,7 @@
                     </div>
                 </div>
                 <p class="resource-desc">Dokumen legalitas untuk ditunjukkan kepada responden dan aparat desa.</p>
-                <button class="btn-outline"><i data-lucide="download"></i> Unduh PDF</button>
+                <button class="btn-outline"><i data-lucide="external-link"></i> Buka</button>
             </div>
         </section>
 

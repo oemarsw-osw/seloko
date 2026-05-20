@@ -129,10 +129,13 @@ try {
 
         if ($pkName) {
             try {
+                $pgsql->exec("SAVEPOINT seq_reset");
                 $pgsql->exec("SELECT setval(pg_get_serial_sequence('\"$table\"', '$pkName'), coalesce(max(\"$pkName\"), 1)) FROM \"$table\";");
+                $pgsql->exec("RELEASE SAVEPOINT seq_reset");
                 echo "  Reset sequence for $table ($pkName) successfully.\n";
             } catch (Exception $seqEx) {
-                // If not a sequence column, ignore
+                // If not a sequence column, ignore and rollback the savepoint
+                $pgsql->exec("ROLLBACK TO SAVEPOINT seq_reset");
             }
         }
     }
@@ -145,3 +148,4 @@ try {
     echo "\nError during synchronization: " . $e->getMessage() . "\n";
     exit(1);
 }
+
